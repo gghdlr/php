@@ -1,16 +1,6 @@
-
-<?php 
-    class User{
-        private $name;
-
-        public function __construct(string $name){
-            $this->name = $name;
-        }
-        public function getName(){
-            return $this->name;
-        }
-    }
-
+<?php
+    namespace src\Models\Articles;
+    use src\Models\Users\User;
     class Article{
         private $title;
         private $text;
@@ -26,9 +16,14 @@
             return $this->author;
         }
     }
-    $user = new User("Ivan");
-    $article = new Article("title", "text", $user);
 
-   //var_dump($article);
-    echo $article->getAuthor()->getName();
+
+
+
+
+
+
+
+
+
 ?>
