@@ -17,9 +17,9 @@ foreach($articles as $article){
     echo '
     <tr>
       <th scope="row">'.++$i.'</th>
-      <td><a href= "www/article/'.$article['id'].'">'.$article['name'].'</td>
-      <td>'.$article['text'].'</td>
-      <td>'.$article['author_id'].'</td>
+      <td><a href= "article/'.$article-> getId().'">'.$article->getName().'</td>
+      <td>'.$article->getText().'</td>
+      <td>'.$article->getAuthorId()->getNickname().'</td>
     </tr>';
 }
 
