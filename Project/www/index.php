@@ -21,22 +21,15 @@
             break;
         }
     }
+    unset($matches[0]);
+    $action = $controllerAndAction[1];
+    $controllerName = $controllerAndAction[0];
     if($isRouteFound){
-        $controller = new $controllerAndAction[0];
-        $controller->$controllerAndAction;
-        var_dump($controllerAndAction);
+        $controller = new $controllerName;
+        $controller->$action(...$matches);
     }
-    $controller = new src\Controllers\MainControllers;
-
-    if(!empty($matches)){
-        $controller->sayHello($matches[1]);
-        return;
+    else{
+    echo 'Nor Found';
     }
-    $pattern = '~^$~';
-    preg_match($pattern, $url, $matches);
-    if(!empty($matches)){
-        $controller->main();
-        return;
-    }else echo 'Nor Found';
     
 ?>
