@@ -20,9 +20,73 @@ abstract class ActiveRecordEntity{
     } 
 
     public static function findAll(){
-        $db = new Db();
-        $sql = 'SELECT * FROM `'.static::getTableName();
+        //$db = new Db();
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `'.static::getTableName().'`';
         $articles = $db->query($sql, [], static::class);
+        return $articles;
     }
-    abstract function getTableName();
+    public static function getById(int $id): ?self{
+        //$db = new Db();
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `'.static::getTableName().'` WHERE `id`=:id';
+        $entities = $db->query($sql, [':id' => $id], static::class);
+        return $entities ? $entities[0] : null;
+    }
+    private function mapToDoProperties(): array{
+        $mapped = [];
+        $reflector = new \ReflectionObject($this);
+        $properties = $reflector->getProperties(); 
+        $propertiesName = [];
+        foreach($properties as $property){
+            $propertyName = $property->getName();
+            $propertiesNameToDbFormat = $this->camelcaseToUnderScore($property->getName());
+            $propertiesName[$propertiesNameToDbFormat] = $this-> $propertyName;
+        }
+        return $propertiesName;
+    }
+    private function camelcaseToUnderScore(string $str){
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $str));
+    }
+    public function save(){
+       $propertiesName = $this-> mapToDoProperties();
+        if($propertiesName['id'] === null){ $this->insert($propertiesName);}
+        else  $this->update($propertiesName);
+    }
+    public function insert($propertiesName){
+        $db = Db::getInstance();
+        $name = [];
+        $param = [];
+        $paramToValue = [];
+        foreach($propertiesName as $key=>$value){
+            $param = ':'.$key;
+            $name [] = '`'.$key.'`';
+            $params [] = $param;
+            $paramToValue[$param] = $value;
+        }
+        $sql = 'INSERT INTO '.static::getTableName().' ('.implode(',', $name).') VALUES ('.implode(',', $params).')';
+        $db->query($sql, $paramToValue, static::class);
+    }
+
+    public function update($propertiesName){
+        $db = Db::getInstance();
+        $keyToParam = [];
+        $paramToValue = [];
+        foreach($propertiesName as $key=>$value){
+            $param = ':'.$key;
+            $keyToParam[] = '`'.$key.'`='.$param;
+            $paramToValue[$param] = $value;
+        }
+        $sql = 'UPDATE '.static::getTableName().' SET'.implode(',', $keyToParam).' WHERE `id` = '.$this->id;
+        $db->query($sql, $paramToValue, static::class);
+    }
+
+    public function delete(){
+        $db = Db::getInstance();
+      $sql = 'DELETE FROM`'.static::getTableName().'` WHERE `id`=:id';
+      $db->query($sql, [':id'=> $this->id], static::class);
+
+    }
+
+    abstract static function getTableName();
 }

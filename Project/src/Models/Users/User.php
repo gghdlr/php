@@ -13,7 +13,7 @@
         public function getNickname(){
             return $this->nickname;
         }
-        public function getTableName()
+        public static function getTableName()
         {
             return 'users';
         }

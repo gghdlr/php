@@ -7,8 +7,8 @@ require __DIR__.'/../header.php';
     <h5 class="card-title"><?=$article->getName();?></h5>
     <p class="card-text"><?=$article->getText();?></p>
     <p class="card-text"><?=$article->getAuthorId()->getNickname();?></p>
-    <a href="#" class="btn btn-primary">update</a>
-    <a href="#" class="btn btn-primary">save</a>
+    <a href="/yurlov/Project/www/article/edit/<?=$article->getId();?>" class="btn btn-primary">edit</a>
+    <a  href="/yurlov/Project/www/article/delete/<?=$article->getId();?>" class="btn btn-primary">delete</a>
 
   </div>
 </div>

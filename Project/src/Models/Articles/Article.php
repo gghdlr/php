@@ -10,11 +10,6 @@
         protected $text;
         protected $authorId;
 
-        public function getAuthor(): User{
-            return $this->authorId;
-        }
-
-        
         public function getName(){
             return $this->name;
         }
@@ -22,19 +17,32 @@
         public function getText(){
             return $this->text;
         }
-       
 
         public function getAuthorId() : User{
-           $db = new Db(); 
+           $db = Db::getInstance(); 
            $user = $db -> query('SELECT * FROM `users` WHERE `id` = :id', [':id'=>$this->authorId], User::class);
-           //var_dump($user);
            return $user[0];
         }
 
-        public function getTableName()
-        {
-            return 'article';
+        public function setName(string $name){
+            $this->name = $name;
         }
+
+        public function setText(string $text){
+            $this->text = $text;
+        }
+
+        public function setAuthorId(int $id){
+            $this->authorId = $id;
+        }
+       
+
+        public static function getTableName()
+        {
+            return 'articles';
+        }   
+        
+        
     }
 
 ?>
