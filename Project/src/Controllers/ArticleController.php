@@ -1,9 +1,11 @@
 <?php
 namespace src\Controllers;
 
+use src\Models\ActiveRecordEntity;
 use src\View\View;
 use src\Models\Articles\Article;
 use src\Models\Users\User;
+use src\Models\Comment\Comment;
     class ArticleController{
     private $view;
     public function __construct(){ 
@@ -31,6 +33,12 @@ use src\Models\Users\User;
 
      public function delete(int $id){
      $article = Article::getById($id);
+     if(Comment::findAllComments($article->getId()) != null){
+       $comments = Comment::findAllComments($article->getId());
+       foreach($comments as $comment){
+        $comment->delete();
+       }
+     }
      $article->delete();
      header('Location: http://localhost:8080/yurlov/Project/www/');
 
@@ -39,12 +47,12 @@ use src\Models\Users\User;
 
     public function show($id){
        $article = Article::getById($id);
-       $this->view->renderHTML('/articles/show.php', ['article'=>$article]);
+       $comments = Comment::findAllComments($id);
+       $this->view->renderHTML('/articles/show.php', ['article'=>$article, 'comments'=>$comments]);
     }
     
     public function update($id){
       $article = Article::getById($id);
-    
       $article->setName($_POST['name']);
       $article->setText($_POST['text']);
       $article->setAuthorId($_POST['author']);

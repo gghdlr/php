@@ -5,7 +5,6 @@ abstract class ActiveRecordEntity{
     protected $id;
 
     public function __set(String $property, string $value){
-        //echo'Creatr id '.$this->underscoreCamelCase($property).' created_at '.$this->underscoreCamelCase($value);
         $propertyName = $this-> underscoreCamelCase($property);
         $this->$propertyName = $value;
      }
@@ -14,20 +13,17 @@ abstract class ActiveRecordEntity{
         return lcfirst(str_replace('_', '', ucwords($name, '_')));
     }
 
-    
     public function getId(){
         return $this->id;
     } 
 
     public static function findAll(){
-        //$db = new Db();
         $db = Db::getInstance();
         $sql = 'SELECT * FROM `'.static::getTableName().'`';
         $articles = $db->query($sql, [], static::class);
         return $articles;
     }
     public static function getById(int $id): ?self{
-        //$db = new Db();
         $db = Db::getInstance();
         $sql = 'SELECT * FROM `'.static::getTableName().'` WHERE `id`=:id';
         $entities = $db->query($sql, [':id' => $id], static::class);
@@ -53,7 +49,7 @@ abstract class ActiveRecordEntity{
         if($propertiesName['id'] === null){ $this->insert($propertiesName);}
         else  $this->update($propertiesName);
     }
-    public function insert($propertiesName){
+    public function insert($propertiesName){ //отправить в базу
         $db = Db::getInstance();
         $name = [];
         $param = [];
@@ -82,10 +78,17 @@ abstract class ActiveRecordEntity{
     }
 
     public function delete(){
-        $db = Db::getInstance();
+      $db = Db::getInstance();
       $sql = 'DELETE FROM`'.static::getTableName().'` WHERE `id`=:id';
       $db->query($sql, [':id'=> $this->id], static::class);
 
+    }
+
+    public static function findAllComments(int $postId){
+        $db = Db::getInstance();
+        $sql = 'SELECT * FROM `'.static::getTableName().'` WHERE `post_id`=:id';
+        $comments = $db->query($sql, [':id' => $postId], static::class);
+        return $comments;
     }
 
     abstract static function getTableName();
